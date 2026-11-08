@@ -64,7 +64,7 @@ export const EVENTOS: Evento[] = [
   {
     id: 'e2',
     titulo: 'Corpus Christi',
-    cuando: 'Junio (fecha según el calendario litúrgico)',
+    cuando: 'Domingo después del Corpus (27 de mayo de 2027)',
     fecha: '2027-05-30',
     lugar: 'Fuentelespino de Haro',
     texto: 'Celebración tradicional del Corpus Christi en el pueblo.',

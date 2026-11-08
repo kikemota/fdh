@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import Agenda from './Agenda'
 import {
   ALREDEDORES,
   AEMET_URL,
@@ -265,32 +266,6 @@ function Avisos({ avisos, publicar }: { avisos: Aviso[]; publicar: (a: Aviso) =>
           <div className="card" key={a.id}>
             <AvisoItem a={a} />
           </div>
-        ))}
-      </div>
-    </>
-  )
-}
-
-function Agenda() {
-  const ordenados = [...EVENTOS].sort((a, b) => (a.fecha ?? '9999').localeCompare(b.fecha ?? '9999'))
-  return (
-    <>
-      <header className="page-head">
-        <h1>Agenda</h1>
-      </header>
-      <div className="stack">
-        {ordenados.map((e) => (
-          <article className="card evento" key={e.id}>
-            <span className={`chip chip-${e.categoria}`}>{e.categoria === 'fiestas' ? 'Fiestas' : e.categoria === 'deporte' ? 'Deporte' : 'Cultura'}</span>
-            <h3>{e.titulo}</h3>
-            <p className="evento-cuando">{e.cuando}</p>
-            <p>{e.texto}</p>
-            {e.enlace && (
-              <a href={e.enlace} target="_blank" rel="noreferrer" className="link-sm">
-                Más información ↗
-              </a>
-            )}
-          </article>
         ))}
       </div>
     </>

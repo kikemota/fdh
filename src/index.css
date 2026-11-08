@@ -148,3 +148,28 @@ main { padding-block: 0 24px; padding-left: max(16px, env(safe-area-inset-left, 
 }
 .tabbar button { background: none; border: 0; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 0.7rem; color: var(--muted); padding: 6px 0; cursor: pointer; }
 .tabbar button.on { color: var(--brand); font-weight: 700; }
+
+/* ---------- Calendario ---------- */
+.cal { padding: 14px 12px; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.cal-mes { font-size: 1.1rem; }
+.cal-mes::first-letter { text-transform: uppercase; }
+.cal-nav { width: 40px; height: 40px; border-radius: 999px; border: 1px solid var(--line); background: var(--bg); font-size: 1.4rem; line-height: 1; cursor: pointer; color: var(--brand); }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-dow { text-align: center; font-size: 0.72rem; font-weight: 700; color: var(--muted); padding: 4px 0; }
+.cal-dia { aspect-ratio: 1; max-width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 0; border-radius: 12px; background: none; cursor: pointer; font-variant-numeric: tabular-nums; font-size: 0.95rem; }
+.cal-dia.con-evento { background: var(--wheat); font-weight: 700; color: var(--brand); }
+.cal-dia.hoy { outline: 2px solid var(--brand); outline-offset: -2px; }
+.cal-dia.sel { background: var(--brand); color: var(--brand-ink); }
+.cal-dia:focus-visible, .cal-nav:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.cal-puntos { display: flex; gap: 2px; }
+.punto { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+.punto-deporte { background: var(--accent); }
+.cal-dia.sel .punto { background: var(--brand-ink); }
+.cal-hoy { display: block; margin: 10px auto 0; }
+.seccion-titulo { font-size: 1rem; margin: 6px 4px -4px; text-transform: none; }
+.seccion-titulo::first-letter { text-transform: uppercase; }
+.vacio { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+.vacio .link-sm { text-align: left; }
+.evento-acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 10px; }
+.btn-sm { padding: 8px 14px; font-size: 0.875rem; text-decoration: none; }
