@@ -1,25 +1,31 @@
 {
-  "name": "fdh",
+  "name": "fdh-app",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "test:api": "rolldown netlify/tests/api.test.ts --platform node --format esm -d .test-build --external node:* --external @netlify/blobs && node --test .test-build/api.test.js",
+    "serve:local": "rolldown netlify/tests/local-server.ts --platform node --format esm -d .test-build --external node:* --external @netlify/blobs && node .test-build/local-server.js"
   },
   "dependencies": {
+    "@netlify/blobs": "^11.1.8",
     "react": "^19.3.1",
     "react-dom": "^19.3.1"
   },
   "devDependencies": {
-    "@types/node": "^24.19.2",
+    "@netlify/functions": "^6.1.1",
+    "@types/node": "^22.20.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "oxlint": "^1.90.0",
-    "typescript": "~7.0.2",
-    "vite": "^8.3.6"
+    "typescript": "^5.9.3",
+    "vite": "^8.3.6",
+    "vite-plugin-pwa": "^2.0.0"
   }
 }

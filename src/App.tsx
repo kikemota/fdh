@@ -1,18 +1,13 @@
 import { useEffect, useMemo, useState } from 'react'
 import Agenda from './Agenda'
-import {
-  ALREDEDORES,
-  AEMET_URL,
-  AVISOS_INICIALES,
-  COORDS,
-  EVENTOS,
-  GRUPOS_TEL,
-  PUEBLO,
-  REDES,
-  TELEFONOS,
-  type Aviso,
-  type Seccion,
-} from './data'
+import type { Aviso } from './api/types'
+import { AvisoActualizacion, VersionApp } from './AppVersion'
+import { ContenidoProvider, useContenido } from './contenido'
+import { ALREDEDORES, AEMET_URL, COORDS, GRUPOS_TEL, PUEBLO, REDES, TELEFONOS, type Seccion } from './data'
+import { href, useRoute } from './router'
+import { Admin } from './screens/Admin'
+import { AcceptInvite, Setup, SignIn } from './screens/Auth'
+import { SessionProvider, useEditor, useSession } from './session'
 
 type Tab = 'inicio' | 'avisos' | 'agenda' | 'pueblo' | 'telefonos'
 
@@ -32,23 +27,7 @@ function Icon({ d, size = 22 }: { d: string; size?: number }) {
   )
 }
 
-const STORE_KEY = 'fdh-avisos-v1'
-function cargarAvisos(): Aviso[] {
-  try {
-    const raw = localStorage.getItem(STORE_KEY)
-    if (raw) return JSON.parse(raw) as Aviso[]
-  } catch {
-    /* sin almacenamiento: usamos los iniciales */
-  }
-  return AVISOS_INICIALES
-}
-function guardarAvisos(a: Aviso[]) {
-  try {
-    localStorage.setItem(STORE_KEY, JSON.stringify(a))
-  } catch {
-    /* ignorar */
-  }
-}
+const hoyIso = () => new Date().toISOString().slice(0, 10)
 
 function fechaCorta(iso: string) {
   return new Date(iso).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
@@ -145,19 +124,23 @@ function AvisoItem({ a }: { a: Aviso }) {
         <span className={`chip chip-${a.tipo}`}>{a.tipo === 'urgente' ? 'Urgente' : a.tipo === 'bando' ? 'Bando' : 'Aviso'}</span>
         <span className="muted">{fechaCorta(a.fecha)}</span>
         {a.ejemplo && <span className="chip chip-demo">Ejemplo</span>}
+        {a.autor && <span className="muted">· {a.autor}</span>}
       </div>
       <h3>{a.titulo}</h3>
-      <p>{a.texto}</p>
+      {a.texto && <p className="pre">{a.texto}</p>}
     </article>
   )
 }
 
-function Inicio({ avisos, ir }: { avisos: Aviso[]; ir: (t: Tab) => void }) {
-  const proximo = EVENTOS.filter((e) => e.fecha).sort((a, b) => a.fecha!.localeCompare(b.fecha!))[0]
+function Inicio({ ir }: { ir: (t: Tab) => void }) {
+  const { avisos, eventos } = useContenido()
+  const editor = useEditor()
+  const hoy = hoyIso()
+  const proximo = eventos.filter((e) => e.fecha && e.fecha >= hoy).sort((a, b) => a.fecha!.localeCompare(b.fecha!))[0]
   return (
     <>
       <header className="hero">
-        <p className="hero-kicker">Cuenca · La Mancha</p>
+        <p className="hero-kicker">Fdh App · Cuenca · La Mancha</p>
         <h1>Fuentelespino de Haro</h1>
         <p className="hero-sub">Villa desde 1673</p>
       </header>
@@ -181,7 +164,7 @@ function Inicio({ avisos, ir }: { avisos: Aviso[]; ir: (t: Tab) => void }) {
               </button>
             </div>
             <h3>{proximo.titulo}</h3>
-            <p className="muted">{proximo.cuando}</p>
+            <p className="muted">{new Date(proximo.fecha + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</p>
           </section>
         )}
         <div className="accesos">
@@ -210,63 +193,41 @@ function Inicio({ avisos, ir }: { avisos: Aviso[]; ir: (t: Tab) => void }) {
             ))}
           </ul>
         </section>
+        <footer className="pie">
+          <a className="link-sm" href={href('admin')}>
+            {editor ? `Gestión (${editor.user.name})` : 'Acceso para editores'}
+          </a>
+          <VersionApp />
+        </footer>
       </div>
     </>
   )
 }
 
-function Avisos({ avisos, publicar }: { avisos: Aviso[]; publicar: (a: Aviso) => void }) {
-  const [abierto, setAbierto] = useState(false)
-  const [titulo, setTitulo] = useState('')
-  const [texto, setTexto] = useState('')
-  const [tipo, setTipo] = useState<Aviso['tipo']>('aviso')
-  const enviar = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!titulo.trim()) return
-    publicar({ id: crypto.randomUUID(), titulo: titulo.trim(), texto: texto.trim(), tipo, fecha: new Date().toISOString() })
-    setTitulo('')
-    setTexto('')
-    setTipo('aviso')
-    setAbierto(false)
-  }
+function Avisos() {
+  const { avisos, origen } = useContenido()
+  const editor = useEditor()
   return (
     <>
       <header className="page-head">
         <h1>Avisos y bandos</h1>
-        <button className="btn" onClick={() => setAbierto((v) => !v)}>
-          {abierto ? 'Cancelar' : 'Publicar'}
-        </button>
+        {editor && (
+          <a className="btn" href={href('admin')}>
+            Publicar
+          </a>
+        )}
       </header>
       <div className="stack">
-        {abierto && (
-          <form className="card form" onSubmit={enviar}>
-            <p className="muted small">Modo demostración: el aviso se guarda solo en este móvil. Con el panel real llegará a todos con una notificación.</p>
-            <label>
-              Tipo
-              <select value={tipo} onChange={(e) => setTipo(e.target.value as Aviso['tipo'])}>
-                <option value="aviso">Aviso</option>
-                <option value="bando">Bando</option>
-                <option value="urgente">Urgente</option>
-              </select>
-            </label>
-            <label>
-              Título
-              <input value={titulo} onChange={(e) => setTitulo(e.target.value)} required maxLength={80} />
-            </label>
-            <label>
-              Texto
-              <textarea value={texto} onChange={(e) => setTexto(e.target.value)} rows={4} />
-            </label>
-            <button className="btn" type="submit">
-              Publicar aviso
-            </button>
-          </form>
+        {origen !== 'servidor' && <p className="muted small">Sin conexión con el servidor: se muestran los últimos avisos guardados.</p>}
+        {avisos.length ? (
+          avisos.map((a) => (
+            <div className="card" key={a.id}>
+              <AvisoItem a={a} />
+            </div>
+          ))
+        ) : (
+          <p className="card muted">No hay avisos publicados.</p>
         )}
-        {avisos.map((a) => (
-          <div className="card" key={a.id}>
-            <AvisoItem a={a} />
-          </div>
-        ))}
       </div>
     </>
   )
@@ -372,32 +333,43 @@ function Telefonos() {
 
 // ---------- App ----------
 export default function App() {
-  const [tab, setTab] = useState<Tab>(() => {
-    const h = location.hash.slice(1) as Tab
-    return TABS.some((t) => t.id === h) ? h : 'inicio'
-  })
-  const [avisos, setAvisos] = useState<Aviso[]>(cargarAvisos)
+  return (
+    <SessionProvider>
+      <ContenidoProvider>
+        <Marco />
+      </ContenidoProvider>
+    </SessionProvider>
+  )
+}
 
+function Gestion({ route }: { route: string[] }) {
+  const { state } = useSession()
+  if (route[0] === 'invitacion' && route[1]) return <AcceptInvite token={route[1]} />
+  if (state.kind === 'loading') return <p className="muted page-head">Cargando…</p>
+  if (state.kind === 'signedOut') return route[0] === 'configurar' ? <Setup /> : <SignIn message={state.message} />
+  return <Admin seccion={route[1]} />
+}
+
+function Marco() {
+  const route = useRoute()
+  const r = route[0] ?? 'inicio'
+  const gestion = r === 'admin' || r === 'configurar' || r === 'invitacion'
+  const tab: Tab | null = TABS.some((t) => t.id === r) ? (r as Tab) : gestion ? null : 'inicio'
   const ir = (t: Tab) => {
-    setTab(t)
-    history.replaceState(null, '', `#${t}`)
-    window.scrollTo(0, 0)
-  }
-  const publicar = (a: Aviso) => {
-    const nuevos = [a, ...avisos]
-    setAvisos(nuevos)
-    guardarAvisos(nuevos)
+    window.location.hash = t === 'inicio' ? '#/' : href(t)
   }
 
   return (
     <div className="app">
       <main>
-        {tab === 'inicio' && <Inicio avisos={avisos} ir={ir} />}
-        {tab === 'avisos' && <Avisos avisos={avisos} publicar={publicar} />}
+        {gestion && <Gestion route={route} />}
+        {tab === 'inicio' && <Inicio ir={ir} />}
+        {tab === 'avisos' && <Avisos />}
         {tab === 'agenda' && <Agenda />}
         {tab === 'pueblo' && <Pueblo />}
         {tab === 'telefonos' && <Telefonos />}
       </main>
+      <AvisoActualizacion />
       <nav className="tabbar" aria-label="Secciones">
         {TABS.map((t) => (
           <button key={t.id} className={tab === t.id ? 'on' : ''} onClick={() => ir(t.id)} aria-current={tab === t.id ? 'page' : undefined}>

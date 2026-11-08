@@ -1,25 +1,7 @@
 // Contenido inicial tomado de https://www.fuentelespinodeharo.net/ (nov. 2026).
-// Avisos y eventos marcados como "ejemplo" son de demostración hasta tener panel real.
+// Es el contenido con el que arranca la base de datos y el que se muestra si el servidor no responde.
 
-export type Aviso = {
-  id: string
-  titulo: string
-  texto: string
-  fecha: string // ISO
-  tipo: 'bando' | 'aviso' | 'urgente'
-  ejemplo?: boolean
-}
-
-export type Evento = {
-  id: string
-  titulo: string
-  cuando: string // texto libre, p. ej. "13 de junio"
-  fecha?: string // ISO si se conoce, para ordenar
-  lugar?: string
-  texto: string
-  enlace?: string
-  categoria: 'fiestas' | 'deporte' | 'cultura'
-}
+import type { Aviso, Evento } from './api/types'
 
 export type Telefono = { nombre: string; numeros: string[]; nota?: string; grupo: 'pueblo' | 'salud' | 'seguridad' | 'transporte' }
 
@@ -32,25 +14,9 @@ export const AVISOS_INICIALES: Aviso[] = [
     fecha: '2026-11-08T10:00:00Z',
     tipo: 'aviso',
   },
-  {
-    id: 'a2',
-    titulo: 'Corte de agua programado',
-    texto: 'Ejemplo de aviso: el martes de 9:00 a 13:00 habrá corte de agua en la calle Mayor por obras en la red.',
-    fecha: '2026-11-06T09:00:00Z',
-    tipo: 'urgente',
-    ejemplo: true,
-  },
-  {
-    id: 'a3',
-    titulo: 'Bando: recogida de enseres',
-    texto: 'Ejemplo de bando: el primer viernes de cada mes se recogen muebles y enseres. Avisad en el Ayuntamiento.',
-    fecha: '2026-11-03T09:00:00Z',
-    tipo: 'bando',
-    ejemplo: true,
-  },
 ]
 
-export const EVENTOS: Evento[] = [
+export const EVENTOS_INICIALES: Evento[] = [
   {
     id: 'e1',
     titulo: 'Fiestas de San Antonio de Padua',
