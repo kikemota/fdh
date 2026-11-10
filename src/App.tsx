@@ -3,7 +3,10 @@ import Agenda from './Agenda'
 import type { Aviso } from './api/types'
 import { AvisoActualizacion, VersionApp } from './AppVersion'
 import { ContenidoProvider, useContenido } from './contenido'
-import { ALREDEDORES, AEMET_URL, COORDS, GRUPOS_TEL, PUEBLO, REDES, TELEFONOS, type Seccion } from './data'
+import { ALREDEDORES, AEMET_URL, COORDS, GRUPOS_TEL, REDES, TELEFONOS } from './data'
+import { VIDEOS_PROMOCIONALES } from './pueblo'
+import { PuebloDetalle, SECCIONES_PUEBLO } from './screens/Pueblo'
+import { VideoYT } from './Video'
 import { href, useRoute } from './router'
 import { Admin } from './screens/Admin'
 import { AcceptInvite, Setup, SignIn } from './screens/Auth'
@@ -154,6 +157,15 @@ function Inicio({ ir }: { ir: (t: Tab) => void }) {
           </div>
           {avisos[0] ? <AvisoItem a={avisos[0]} /> : <p className="muted">No hay avisos.</p>}
         </section>
+        <section className="card">
+          <div className="card-head">
+            <h2>Conoce el pueblo</h2>
+            <a className="link-sm" href={href('pueblo', 'videos')}>
+              Más vídeos
+            </a>
+          </div>
+          <VideoYT video={VIDEOS_PROMOCIONALES[0]} grande />
+        </section>
         <TarjetaTiempo />
         {proximo && (
           <section className="card">
@@ -233,29 +245,8 @@ function Avisos() {
   )
 }
 
-function Pueblo() {
-  const [sel, setSel] = useState<Seccion | null>(null)
-  if (sel)
-    return (
-      <>
-        <header className="page-head">
-          <button className="back" onClick={() => setSel(null)} aria-label="Volver">
-            ←
-          </button>
-          <h1>{sel.titulo}</h1>
-        </header>
-        <article className="card prose">
-          {sel.parrafos.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-          {sel.fuente && (
-            <a href={sel.fuente} target="_blank" rel="noreferrer" className="link-sm">
-              Fuente: fuentelespinodeharo.net ↗
-            </a>
-          )}
-        </article>
-      </>
-    )
+function Pueblo({ sub }: { sub?: string }) {
+  if (sub) return <PuebloDetalle sub={sub} />
   return (
     <>
       <header className="page-head">
@@ -263,11 +254,11 @@ function Pueblo() {
       </header>
       <div className="stack">
         <div className="grid2">
-          {PUEBLO.map((s) => (
-            <button className="card tile" key={s.id} onClick={() => setSel(s)}>
+          {SECCIONES_PUEBLO.map((s) => (
+            <a className="card tile" key={s.id} href={href('pueblo', s.id)}>
               <h3>{s.titulo}</h3>
               <p className="muted small">{s.resumen}</p>
-            </button>
+            </a>
           ))}
         </div>
         <section className="card">
@@ -366,7 +357,7 @@ function Marco() {
         {tab === 'inicio' && <Inicio ir={ir} />}
         {tab === 'avisos' && <Avisos />}
         {tab === 'agenda' && <Agenda />}
-        {tab === 'pueblo' && <Pueblo />}
+        {tab === 'pueblo' && <Pueblo sub={route[1]} />}
         {tab === 'telefonos' && <Telefonos />}
       </main>
       <AvisoActualizacion />

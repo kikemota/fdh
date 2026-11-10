@@ -93,19 +93,7 @@ export const GRUPOS_TEL: Record<Telefono['grupo'], string> = {
 export type Seccion = { id: string; titulo: string; resumen: string; parrafos: string[]; fuente?: string }
 
 export const PUEBLO: Seccion[] = [
-  {
-    id: 'historia',
-    titulo: 'Historia',
-    resumen: 'De la Fuente del Espino a villa independiente en 1673.',
-    parrafos: [
-      'El pueblo nace en la segunda repoblación castellana (siglos XI al XIII), junto a una fuente rodeada de espinos: la "Fuente del Espino".',
-      'El apellido "de Haro" le llega a finales del siglo XII por Diego López de Haro, señor de Vizcaya.',
-      'En 1673 Carlos II le concede el privilegio de villa, separándose de la jurisdicción de la que dependía.',
-      'Las construcciones más antiguas, como la ermita románica de Santa Ana (siglo XII), la iglesia de los siglos XV y XVI y la Casa del Pósito (siglo XVIII), se perdieron con el tiempo.',
-      'Para saber más: "Fuentelespino de Haro, Apuntes para su Historia", de José Ramón Guardia Santaella.',
-    ],
-    fuente: 'https://www.fuentelespinodeharo.net/historia.htm',
-  },
+
   {
     id: 'datos',
     titulo: 'El pueblo en datos',
@@ -119,17 +107,7 @@ export const PUEBLO: Seccion[] = [
     ],
     fuente: 'https://www.fuentelespinodeharo.net/datos.htm',
   },
-  {
-    id: 'personajes',
-    titulo: 'Personajes',
-    resumen: 'El Condestable Iranzo y otros hijos de la villa.',
-    parrafos: [
-      'Miguel Lucas de Iranzo, Condestable de Castilla en el siglo XV, nació en el despoblado de Gilibert, dentro del término. La Iranzada lleva su nombre.',
-      'Pedro Gallego fue comisario del Santo Oficio en el siglo XVIII.',
-      'El maestro Teófilo Azabal Molina dejó huella en varias generaciones del pueblo.',
-    ],
-    fuente: 'https://www.fuentelespinodeharo.net/ilustres.htm',
-  },
+
   {
     id: 'castros',
     titulo: 'Yacimientos',

@@ -216,3 +216,38 @@ a.btn { text-decoration: none; display: inline-block; }
   font-size: 0.9rem; font-weight: 600;
 }
 .update-bar .btn { background: var(--wheat); color: var(--brand); }
+
+/* ---------- El pueblo: historia, personajes, vídeos, alojamiento ---------- */
+a.tile { display: block; text-decoration: none; color: var(--ink); }
+.entradilla { font-size: 1.05rem; margin: 0 4px; }
+.fuente { align-self: flex-start; }
+.prose h2 { margin-bottom: 8px; }
+.cronologia { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; }
+.cronologia li { display: grid; grid-template-columns: 7.5rem 1fr; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 0.92rem; }
+.cronologia li:first-child { border-top: 0; }
+.crono-cuando { font-weight: 700; color: var(--brand); font-variant-numeric: tabular-nums; }
+.personaje { padding: 0; }
+.personaje summary { display: flex; gap: 12px; align-items: center; padding: 14px 16px; cursor: pointer; list-style: none; }
+.personaje summary::-webkit-details-marker { display: none; }
+.personaje summary::after { content: '+'; margin-left: auto; font-size: 1.4rem; color: var(--brand); font-weight: 600; }
+.personaje[open] summary::after { content: '–'; }
+.personaje-cab { display: flex; flex-direction: column; min-width: 0; }
+.personaje-bio { padding: 0 16px 16px; }
+.personaje-bio p { margin: 0 0 0.7rem; }
+.avatar { flex: none; width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; background: var(--wheat); color: var(--brand); font-weight: 700; }
+.video { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.video-marco { position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; background: #000; }
+.video-marco iframe, .video-portada { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.video-portada { padding: 0; cursor: pointer; background: #000; }
+.video-portada img { width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0.9; }
+.video-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center; background: rgba(138, 90, 31, 0.92); color: #fff; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3); }
+.video-portada:focus-visible { outline: 3px solid var(--accent); outline-offset: -3px; }
+.stack > .video { background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 10px 10px 12px; }
+.video figcaption { padding: 0 4px; }
+.aloj-nombre { font-size: 1.4rem; margin: 6px 0 4px; }
+.aloj-contacto { margin: 10px 0 6px; }
+.viñetas { margin: 8px 0 0; padding-left: 1.2rem; display: flex; flex-direction: column; gap: 4px; }
+.etiquetas { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 4px; }
+.etiqueta { font-size: 0.85rem; padding: 5px 10px; border-radius: 999px; background: var(--wheat); color: var(--brand); font-weight: 600; }
+.card h3 + .etiquetas { margin-top: 6px; }
+.card > div > h3, .card > h3 { margin-top: 12px; }
