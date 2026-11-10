@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
-import { EVENTOS, type Evento } from './data'
+import type { Evento } from './api/types'
+import { useContenido } from './contenido'
 
 const DIAS = ['L', 'M', 'X', 'J', 'V', 'S', 'D']
 const CATEGORIA: Record<Evento['categoria'], string> = { fiestas: 'Fiestas', deporte: 'Deporte', cultura: 'Cultura' }
@@ -43,7 +44,11 @@ function TarjetaEvento({ e }: { e: Evento }) {
     <article className="card evento">
       <span className={`chip chip-${e.categoria}`}>{CATEGORIA[e.categoria]}</span>
       <h3>{e.titulo}</h3>
-      <p className="evento-cuando">{e.fecha ? fechaLarga(e.fecha) : e.cuando}</p>
+      <p className="evento-cuando">
+        {e.fecha ? fechaLarga(e.fecha) : e.cuando}
+        {e.fecha && e.cuando ? <span className="muted"> · {e.cuando}</span> : null}
+      </p>
+      {e.lugar && <p className="muted small">{e.lugar}</p>}
       <p>{e.texto}</p>
       <div className="evento-acciones">
         {ics && (
@@ -62,6 +67,7 @@ function TarjetaEvento({ e }: { e: Evento }) {
 }
 
 export default function Agenda() {
+  const { eventos: EVENTOS } = useContenido()
   const hoy = hoyIso()
   const [mes, setMes] = useState(() => {
     const d = new Date()
@@ -73,7 +79,7 @@ export default function Agenda() {
     const m = new Map<string, Evento[]>()
     for (const e of EVENTOS) if (e.fecha) m.set(e.fecha, [...(m.get(e.fecha) ?? []), e])
     return m
-  }, [])
+  }, [EVENTOS])
   const sinFecha = EVENTOS.filter((e) => !e.fecha)
 
   // Celdas del mes, empezando en lunes
